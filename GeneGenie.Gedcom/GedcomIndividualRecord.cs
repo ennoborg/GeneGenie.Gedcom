@@ -27,6 +27,9 @@ namespace GeneGenie.Gedcom
         private GedcomRecordList<GedcomName> names;
         private GedcomSex sex;
 
+        /// <summary>Gets or sets the list of <see cref="GedcomCustomRecord"/> entries found when parsing an individual.</summary>
+        public GedcomRecordList<GedcomCustomRecord> Custom { get; set; } = new GedcomRecordList<GedcomCustomRecord>();
+
         private GedcomRecordList<GedcomIndividualEvent> events;
         private GedcomRecordList<GedcomIndividualEvent> attributes;
 
@@ -47,7 +50,7 @@ namespace GeneGenie.Gedcom
         private string permanentRecordFileNumber;
 
         /// <summary>
-        /// The ancestral file number
+        /// The ancestral file number..
         /// </summary>
         private string ancestralFileNumber;
 
@@ -429,7 +432,7 @@ namespace GeneGenie.Gedcom
         /// Gets or sets the address.
         /// This is a hack,  not according to the spec, but Family Tree Maker sticks
         /// an address under an individual.
-        /// GedcomRecordReader will build the address up here, then create a RESI record from it
+        /// GedcomRecordReader will build the address up here, then create a RESI record from it.
         /// </summary>
         /// <value>
         /// The address.
@@ -770,7 +773,7 @@ namespace GeneGenie.Gedcom
         /// For example, names are compared but internal xref ids are not.
         /// </summary>
         /// <param name="individual">The second person to compare against.</param>
-        /// <returns>TODO: Doc</returns>
+        /// <returns>TODO: Doc.</returns>
         public int CompareTo(object individual)
         {
             return CompareTo(individual as GedcomIndividualRecord);
@@ -991,7 +994,7 @@ namespace GeneGenie.Gedcom
         /// Gets the family.
         /// </summary>
         /// <returns>
-        /// Family
+        /// Family.
         /// </returns>
         public GedcomFamilyRecord GetFamily()
         {
@@ -1217,7 +1220,7 @@ namespace GeneGenie.Gedcom
         /// The record will only contain children.
         /// </summary>
         /// <returns>
-        /// A <see cref="GedcomFamilyRecord"/>
+        /// A <see cref="GedcomFamilyRecord"/>.
         /// </returns>
         public GedcomFamilyRecord GetAllChildren()
         {

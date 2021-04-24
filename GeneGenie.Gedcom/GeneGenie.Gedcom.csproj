@@ -18,17 +18,18 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta009">
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.1" />
+        <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
     </ItemGroup>
 
     <PropertyGroup>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <SignAssembly>true</SignAssembly>
-        <Version>1.0.1</Version>
+        <Version>1.0.3</Version>
         <AssemblyOriginatorKeyFile>StrongName.snk</AssemblyOriginatorKeyFile>
         <Authors>Ryan O'Neill, David A. Knight, Grant Winney</Authors>
         <PackageDescription>.Net Standard library for loading, saving, working with and analysing family trees stored in the GEDCOM format.</PackageDescription>
@@ -48,7 +49,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup>

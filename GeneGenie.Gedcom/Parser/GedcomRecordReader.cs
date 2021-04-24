@@ -236,7 +236,6 @@ namespace GeneGenie.Gedcom.Parser
                         // file may not have same newline as environment so this isn't 100% correct
                         read += line.Length + Environment.NewLine.Length;
                         Parser.GedcomParse(line);
-                        line = null;
 
                         // to allow for inaccuracy above
                         int percentDone = (int)Math.Min(100, (read * 100.0F) / fileSize);
@@ -882,7 +881,7 @@ namespace GeneGenie.Gedcom.Parser
             // check address is not null?  Real solution is to use a stack for PreviousTag
             // like it should have been doing in the first place
             // PreviousTag is now using a stack so will return the parent tag, which should be ADDR
-            if (address != null || parseState.PreviousTag == "ADDR")
+            if (address != null && parseState.PreviousTag == "ADDR")
             {
                 switch (tag)
                 {
@@ -1741,8 +1740,7 @@ namespace GeneGenie.Gedcom.Parser
                             custom.Classification = lineValue;
                         }
 
-                        // TODO: may want to use customs at some point
-                        // individualRecord.Events.Add(custom);
+                        individualRecord.Custom.Add(custom);
                         parseState.Records.Push(custom);
                         break;
                 }
@@ -4627,8 +4625,8 @@ namespace GeneGenie.Gedcom.Parser
                     case "GIVN":
                         if (lineValueType == GedcomLineValueType.DataType)
                         {
-                            // Given from NAME has priority
-                            if (string.IsNullOrEmpty(name.Given))
+                            // Given name part has priority over parsed NAME tag if it is supplied.
+                            if (!string.IsNullOrEmpty(lineValue))
                             {
                                 name.Given = lineValue;
                             }
@@ -4638,15 +4636,19 @@ namespace GeneGenie.Gedcom.Parser
                     case "NICK":
                         if (lineValueType == GedcomLineValueType.DataType)
                         {
-                            name.Nick = lineValue;
+                            // Nickname part has priority over parsed NAME tag if it is supplied.
+                            if (!string.IsNullOrEmpty(lineValue))
+                            {
+                                name.Nick = lineValue;
+                            }
                         }
 
                         break;
                     case "SPFX":
                         if (lineValueType == GedcomLineValueType.DataType)
                         {
-                            // surname prefix from NAME has priority
-                            if (string.IsNullOrEmpty(name.SurnamePrefix))
+                            // Surname prefix part has priority over parsed NAME tag if it is supplied.
+                            if (!string.IsNullOrEmpty(lineValue))
                             {
                                 name.SurnamePrefix = lineValue;
                             }
@@ -4656,8 +4658,8 @@ namespace GeneGenie.Gedcom.Parser
                     case "SURN":
                         if (lineValueType == GedcomLineValueType.DataType)
                         {
-                            // surname from NAME has priority
-                            if (string.IsNullOrEmpty(name.Given))
+                            // Surname part has priority over parsed NAME tag if it is supplied.
+                            if (!string.IsNullOrEmpty(lineValue))
                             {
                                 name.Surname = lineValue;
                             }
@@ -4667,8 +4669,8 @@ namespace GeneGenie.Gedcom.Parser
                     case "NSFX":
                         if (lineValueType == GedcomLineValueType.DataType)
                         {
-                            // suffix from NAME has priority
-                            if (string.IsNullOrEmpty(name.Suffix))
+                            // Name suffix part has priority over parsed NAME tag if it is supplied.
+                            if (!string.IsNullOrEmpty(lineValue))
                             {
                                 name.Suffix = lineValue;
                             }

@@ -108,40 +108,44 @@ namespace GeneGenie.Gedcom
                 {
                     string name = value;
 
-                    name = name.Trim();
+                    name = name is null ? string.Empty : name.Trim();
 
-                    int i = name.IndexOf("/");
-                    if (i == -1)
+                    int surnameStartPos = name.IndexOf("/");
+                    int surnameLength = 0;
+                    if (surnameStartPos == -1)
                     {
-                        i = name.LastIndexOf(" ");
-                        if (i != -1)
+                        surnameStartPos = name.LastIndexOf(" ");
+                        if (surnameStartPos != -1)
                         {
-                            Surname = Database.NameCollection[name, i + 1, name.Length - i - 1];
+                            surnameLength = name.Length - surnameStartPos - 1;
+                            Surname = Database.NameCollection[name, surnameStartPos + 1, surnameLength];
                         }
                         else
                         {
                             Surname = string.Empty;
-                            i = name.Length; // No surname, must just be a given name only.
+                            surnameStartPos = name.Length; // No surname, must just be a given name only.
                         }
                     }
                     else
                     {
-                        int j = name.IndexOf("/", i + 1);
-                        if (j == -1)
+                        int surnameEndPos = name.IndexOf("/", surnameStartPos + 1);
+                        if (surnameEndPos == -1)
                         {
-                            Surname = Database.NameCollection[name, i + 1, name.Length - i - 1];
+                            surnameLength = name.Length - surnameStartPos - 1;
+                            Surname = Database.NameCollection[name, surnameStartPos + 1, surnameLength];
                         }
                         else
                         {
-                            Surname = Database.NameCollection[name, i + 1, j - i - 1];
+                            surnameLength = surnameEndPos - surnameStartPos - 1;
+                            Surname = Database.NameCollection[name, surnameStartPos + 1, surnameLength];
                         }
                     }
 
-                    if (i != -1)
+                    if (surnameStartPos != -1)
                     {
                         // given is everything up to the surname, not right
                         // but will do for now
-                        Given = Database.NameCollection[name, 0, i];
+                        Given = Database.NameCollection[name, 0, surnameStartPos];
 
                         // prefix is foo.  e.g.  Prof.  Dr.  Lt. Cmd.
                         // strip it from the given name
@@ -186,7 +190,7 @@ namespace GeneGenie.Gedcom
 
                         // TODO: anything after surname is suffix, again not right
                         // but works for now
-                        int offset = i + 1 + surname.Length + 1;
+                        int offset = surnameStartPos + 1 + surnameLength + 1;
                         if (!string.IsNullOrEmpty(surnamePrefix))
                         {
                             offset += surnamePrefix.Length + 1;
@@ -499,6 +503,7 @@ namespace GeneGenie.Gedcom
             {
                 return (!string.IsNullOrEmpty(prefix)) ||
                         (!string.IsNullOrEmpty(given)) ||
+                        (!string.IsNullOrEmpty(nick)) ||
                         (!string.IsNullOrEmpty(surnamePrefix)) ||
                         (!string.IsNullOrEmpty(surname)) ||
                         (!string.IsNullOrEmpty(suffix));
@@ -721,8 +726,6 @@ namespace GeneGenie.Gedcom
         /// <param name="sw">The writer to output to.</param>
         public override void Output(TextWriter sw)
         {
-            // TODO: should output name parts?  not well supported by other
-            // apps?
             sw.Write(Environment.NewLine);
             sw.Write(Level.ToString());
             sw.Write(" NAME ");
@@ -744,6 +747,14 @@ namespace GeneGenie.Gedcom
                 string line = Type.Replace("@", "@@");
                 sw.Write(line);
             }
+
+            // Gedcom 5.5.5 spec says to always output these fields, even if blank.
+            OutputNamePart(sw, "NPFX", Prefix, Level + 1);
+            OutputNamePart(sw, "GIVN", Given, Level + 1);
+            OutputNamePart(sw, "NICK", Nick, Level + 1);
+            OutputNamePart(sw, "SPFX", SurnamePrefix, Level + 1);
+            OutputNamePart(sw, "SURN", Surname, Level + 1);
+            OutputNamePart(sw, "NSFX", Suffix, Level + 1);
 
             OutputStandard(sw);
 
@@ -806,6 +817,15 @@ namespace GeneGenie.Gedcom
                     }
                 }
             }
+        }
+
+        private void OutputNamePart(TextWriter sw, string tagName, string tagValue, int level)
+        {
+            sw.Write(Environment.NewLine);
+            sw.Write(level.ToString());
+            sw.Write(" " + tagName + " ");
+            var line = tagValue.Replace("@", "@@");
+            sw.Write(line);
         }
 
         private StringBuilder BuildName()
